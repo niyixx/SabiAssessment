@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "5fff6ee2-db63-4026-a4a7-94c401abc760",
+		"name": "Sabi assessment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Generate token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.collectionVariables.set(\"token\", jsonData.token);",
+							"pm.collectionVariables.set(\"fingerprint\", jsonData.fingerPrint);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Fingerprint",
+						"value": "e0224b3d-74f5-49c5-930f-61d7079c7b3b",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n  \"password\": \"000000\", \n  \"username\": \"{{username}}\" \n} \n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api-staging.spaceso2o.com/api/token/generate-token",
+					"protocol": "https",
+					"host": [
+						"api-staging",
+						"spaceso2o",
+						"com"
+					],
+					"path": [
+						"api",
+						"token",
+						"generate-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve user's data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"var username = pm.collectionVariables.get(\"username\");",
+							"",
+							"pm.test(\"Verify the agent referral code is the same as the username\", function () {",
+							"    pm.expect(jsonData.agentCodeToShare).to.eql(username);",
+							"});",
+							"",
+							"pm.test(\"Verify the agent's active state is true\", function(){",
+							"    pm.expect(jsonData.active).to.eql(true)",
+							"});",
+							"",
+							"pm.test(\"Verify first name and last name are displayed\", function () {",
+							"    pm.expect(jsonData.firstName).not.eq(null);",
+							"    pm.expect(jsonData.lastName).not.eq(null);",
+							"});",
+							"",
+							"pm.test(\"Verify the current verification status is false\", function(){",
+							"    pm.expect(jsonData.bvnVerified).to.eql(false)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Fingerprint",
+						"value": "{{fingerprint}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://api-staging.spaceso2o.com/api/users/userData",
+					"protocol": "https",
+					"host": [
+						"api-staging",
+						"spaceso2o",
+						"com"
+					],
+					"path": [
+						"api",
+						"users",
+						"userData"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "fingerprint",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		}
+	]
+}
